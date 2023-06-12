@@ -1,25 +1,45 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react'
+
+const URL ="https://www.thecocktaildb.com/api/json/v1/1/search.php?s="
 
 function App() {
+  const [drinksData,setDrinksData] = useState([])
+  const [searchData,setSearchData] = useState('')
+ 
+
+  const fetchDrinks = async (apiURL) =>{
+    const response = await fetch(apiURL)
+    const {drinks} = await response.json()
+    setDrinksData(drinks);
+   }
+
+  useEffect(()=>{
+    const correctUrl = `${URL} ${searchData}`
+    fetchDrinks(correctUrl)
+  },[searchData])
+
+    
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <center>
+    <div>
+      <input type='text' value={searchData}  name='search' onChange={(e)=>setSearchData(e.target.value)} placeholder='Search Somithing New......' />
+      <hr/>
+      <ul>
+      {  drinksData.map((eachItem)=>{
+              const {idDrink,strDrink,strCategory,strGlass,strDrinkThumb} = eachItem
+        return (
+          <li key={idDrink}>
+          <h1>{strDrink}</h1>
+          <p>{strCategory}</p>
+          <p>{strGlass}</p>
+          <img src={strDrinkThumb} alt="" style={{height:"80px",width:"60px"}} />
+          </li>
+        )
+      })}
+      </ul>
     </div>
-  );
+    </center>
+  )
 }
 
-export default App;
+export default App
